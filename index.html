@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Game Start! - Heartfire Chessboard | Official Site</title>
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: background-color 0.25s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        /* 默认橙色主题 (棕橙灰黄) */
+        :root {
+            --bg-body: #2c1a0c;
+            --container-bg: #F7F2E0;
+            --card-bg-light: #FCF6E8;
+            --text-dark: #2d2b26;
+            --accent-orange: #E67E22;
+            --accent-brown: #8B4513;
+            --btn-primary: #c46b36;
+            --btn-primary-hover: #e28542;
+            --border-cream: #e7cfaa;
+            --comment-bg: #FFF7EA;
+            --tag-bg: #d68b45;
+            --tag-text: #2a1d0c;
+        }
+
+        /* 红黑主题 (深红+黑灰+血橙点缀) */
+        body.theme-redblack {
+            --bg-body: #0a0505;
+            --container-bg: #1a0f0f;
+            --card-bg-light: #241818;
+            --text-dark: #f0e1d1;
+            --accent-orange: #e63946;
+            --accent-brown: #b91c1c;
+            --btn-primary: #9d1f2c;
+            --btn-primary-hover: #c42f3e;
+            --border-cream: #5a2e2e;
+            --comment-bg: #2a1b1b;
+            --tag-bg: #9e2f2f;
+            --tag-text: #ffded5;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+            color: var(--text-dark);
+            line-height: 1.5;
+        }
+
+        .game-container {
+            max-width: 1300px;
+            margin: 30px auto 40px;
+            background: var(--container-bg);
+            box-shadow: 0 20px 35px rgba(0,0,0,0.3);
+            border-radius: 28px 28px 24px 24px;
+            overflow: hidden;
+        }
+
+        .content-padding {
+            padding: 28px 32px 40px 32px;
+        }
+
+        /* 头部区域 含主题切换按钮 */
+        .header-flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+        }
+        .title-area {
+            flex: 1;
+        }
+        .game-title {
+            font-size: 2.8rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, var(--accent-orange), var(--accent-brown));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 8px;
+            border-left: 7px solid var(--accent-orange);
+            padding-left: 20px;
+        }
+        .sub {
+            color: var(--accent-brown);
+            margin-bottom: 16px;
+            font-size: 1rem;
+            font-weight: 500;
+            padding-left: 28px;
+            border-left: 3px solid var(--accent-orange);
+        }
+        .theme-toggle {
+            background: var(--btn-primary);
+            border: none;
+            padding: 10px 18px;
+            border-radius: 60px;
+            color: #FFF2e0;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+            transition: 0.2s;
+        }
+        .theme-toggle:hover {
+            background: var(--btn-primary-hover);
+            transform: scale(1.02);
+        }
+
+        /* 两栏布局 */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            gap: 32px;
+            margin-bottom: 48px;
+        }
+
+        /* 左侧媒体轮播 */
+        .media-section {
+            background: #2e241d;
+            border-radius: 28px;
+            padding: 12px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+        .media-viewer {
+            background: #1e1712;
+            border-radius: 20px;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 320px;
+        }
+        #media-display {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #1f1914;
+            border-radius: 20px;
+        }
+        .media-img {
+            width: 100%;
+            max-height: 380px;
+            object-fit: contain;
+            cursor: zoom-in;
+            transition: transform 0.2s;
+            border-radius: 16px;
+        }
+        .media-video {
+            width: 100%;
+            max-height: 380px;
+            border-radius: 16px;
+            outline: none;
+            background: #000;
+        }
+        .carousel-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 24px;
+            margin-top: 18px;
+        }
+        .arrow-btn {
+            background: var(--btn-primary);
+            border: none;
+            color: #FEF3DB;
+            font-size: 1.6rem;
+            width: 48px;
+            height: 48px;
+            border-radius: 60px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .arrow-btn:hover {
+            background: var(--btn-primary-hover);
+        }
+        .media-counter {
+            background: #492812;
+            padding: 6px 16px;
+            border-radius: 40px;
+            color: #FCE9C4;
+            font-weight: 600;
+        }
+        .zoom-hint {
+            text-align: center;
+            font-size: 0.7rem;
+            margin-top: 8px;
+            color: #c98853;
+        }
+
+        /* 右侧信息卡 */
+        .info-card {
+            background: var(--card-bg-light);
+            border-radius: 28px;
+            padding: 20px 18px;
+            box-shadow: 0 6px 14px rgba(0,0,0,0.2);
+            border: 1px solid var(--border-cream);
+        }
+        .game-icon {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 16px;
+        }
+        .game-icon img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 28px;
+            background: #a56734;
+            box-shadow: 0 10px 18px rgba(0,0,0,0.2);
+            border: 3px solid var(--accent-orange);
+        }
+        .game-short-desc {
+            background: var(--comment-bg);
+            padding: 14px;
+            border-radius: 24px;
+            margin: 20px 0 18px;
+            font-size: 0.9rem;
+            color: var(--text-dark);
+            border-left: 6px solid var(--accent-orange);
+            font-weight: 500;
+        }
+        .info-line {
+            margin: 12px 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            font-size: 0.9rem;
+            border-bottom: 1px dashed var(--border-cream);
+            padding-bottom: 8px;
+        }
+        .info-label {
+            font-weight: 800;
+            color: var(--accent-brown);
+            width: 80px;
+        }
+        .info-value {
+            color: var(--text-dark);
+            font-weight: 500;
+        }
+        .tag-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 12px 0 8px;
+        }
+        .tag {
+            background: var(--tag-bg);
+            padding: 4px 12px;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            color: var(--tag-text);
+            letter-spacing: 0.5px;
+        }
+        .wishlist-note {
+            margin-top: 12px;
+            font-size: 0.75rem;
+            text-align: center;
+            background: var(--comment-bg);
+            border-radius: 40px;
+            padding: 6px;
+            color: var(--text-dark);
+        }
+
+        /* 下载区 */
+        .download-area {
+            background: var(--comment-bg);
+            margin-top: 30px;
+            margin-bottom: 48px;
+            border-radius: 28px;
+            padding: 20px 28px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 25px;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        .download-btn {
+            background: var(--accent-brown);
+            border: none;
+            padding: 12px 32px;
+            border-radius: 48px;
+            color: #FFF5E6;
+            font-weight: bold;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .download-btn:hover {
+            background: var(--btn-primary);
+            transform: translateY(-3px);
+        }
+
+        /* 评论区 - EmberCouncil */
+        .comments-section {
+            background: var(--comment-bg);
+            border-radius: 32px;
+            padding: 24px 28px;
+            border: 1px solid var(--border-cream);
+        }
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-brown);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            border-left: 7px solid var(--accent-orange);
+            padding-left: 20px;
+        }
+        .avg-score-box {
+            background: var(--card-bg-light);
+            border-radius: 48px;
+            padding: 8px 18px;
+            display: inline-flex;
+            align-items: baseline;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .avg-star i, .star-rating i {
+            color: var(--accent-orange);
+        }
+        .rating-number {
+            font-size: 1.7rem;
+            font-weight: 800;
+            color: var(--accent-brown);
+        }
+        .comment-form {
+            background: var(--card-bg-light);
+            padding: 20px;
+            border-radius: 28px;
+            margin-bottom: 32px;
+        }
+        .form-row input, .form-row textarea {
+            flex: 1;
+            padding: 12px 15px;
+            border: none;
+            border-radius: 60px;
+            background: var(--container-bg);
+            border: 1px solid var(--border-cream);
+            font-family: inherit;
+            color: var(--text-dark);
+        }
+        .form-row textarea {
+            border-radius: 24px;
+        }
+        .star-selector {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 14px;
+        }
+        .star-rating-input i {
+            font-size: 1.8rem;
+            cursor: pointer;
+            color: #cc9c6e;
+        }
+        body.theme-redblack .star-rating-input i {
+            color: #9e5e5e;
+        }
+        .star-rating-input i.hover-star, .star-rating-input i.selected-star {
+            color: var(--accent-orange);
+            text-shadow: 0 0 2px #ffac6f;
+        }
+        .submit-comment {
+            background: var(--accent-brown);
+            border: none;
+            padding: 10px 24px;
+            border-radius: 40px;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+        }
+        .comment-list {
+            max-height: 380px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+        .comment-item {
+            background: var(--container-bg);
+            border-radius: 24px;
+            padding: 16px;
+            border-left: 8px solid var(--accent-orange);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+        .comment-author {
+            font-weight: 800;
+            color: var(--accent-brown);
+        }
+        .comment-stars i {
+            color: var(--accent-orange);
+        }
+        footer {
+            text-align: center;
+            padding: 18px;
+            font-size: 0.75rem;
+            background: var(--comment-bg);
+            border-top: 1px solid var(--border-cream);
+            color: var(--text-dark);
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.9);
+            justify-content: center;
+            align-items: center;
+            cursor: zoom-out;
+        }
+        .modal-content {
+            max-width: 85%;
+            max-height: 85%;
+            object-fit: contain;
+            border-radius: 24px;
+        }
+        .close-modal {
+            position: absolute;
+            top: 25px;
+            right: 35px;
+            color: #ffb56b;
+            font-size: 40px;
+            cursor: pointer;
+        }
+        @media (max-width: 860px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+            .content-padding {
+                padding: 20px;
+            }
+            .game-title {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body class="theme-orange">
+<div class="game-container">
+    <div class="content-padding">
+        <div class="header-flex">
+            <div class="title-area">
+                <div class="game-title">Game Start!</div>
+                <div class="sub">Heartfire Chessboard</div>
+            </div>
+            <button class="theme-toggle" id="themeSwitchBtn"><i class="fas fa-palette"></i> Crimson / Ember</button>
+        </div>
+
+        <!-- 左右内容 -->
+        <div class="main-layout">
+            <!-- 左侧媒体轮播区 (图片/视频) 注：图片和视频链接位置可用实际素材替换 -->
+            <div class="media-section">
+                <div class="media-viewer">
+                    <div id="media-display"></div>
+                </div>
+                <div class="carousel-controls">
+                    <button class="arrow-btn" id="prevMedia"><i class="fas fa-chevron-left"></i></button>
+                    <span class="media-counter" id="mediaCounter">1 / 3</span>
+                    <button class="arrow-btn" id="nextMedia"><i class="fas fa-chevron-right"></i></button>
+                </div>
+                <div class="zoom-hint"><i class="fas fa-search-plus"></i> Click image to zoom (video not zoomable)</div>
+            </div>
+
+            <!-- 右侧信息卡 -->
+            <div class="info-card">
+                <div class="game-icon">
+                    <!-- 游戏图标占位，可替换实际图标链接 -->
+                    <img src="assets/images/4.png" alt="Game Icon">
+                </div>
+                <div class="game-short-desc">
+                    Game Start! is a tactical role-playing game where mechanics and narrative are deeply intertwined. 
+                    Players guide the protagonist through a chessboard-like inner world: each move and attack corresponds 
+                    to a self-dialogue, a memory flashback, or an emotional release. Only by transforming the flame into 
+                    a warm inner light through strategy and empathy can the true ending be reached.
+                </div>
+                <div class="info-line">
+                    <span class="info-label">Release Date</span>
+                    <span class="info-value">Autumn 2025</span>
+                </div>
+                <div class="info-line">
+                    <span class="info-label">Developer</span>
+                    <span class="info-value">Ember Studio / Cinder Forge</span>
+                </div>
+                <div class="info-line">
+                    <span class="info-label">Publisher</span>
+                    <span class="info-value">Ember Interactive</span>
+                </div>
+                <div class="info-line">
+                    <span class="info-label">Tags</span>
+                    <div class="tag-list">
+                        <span class="tag">#TacticalRPG</span>
+                        <span class="tag">#PsychologicalNarrative</span>
+                        <span class="tag">#FlameSymbolism</span>
+                        <span class="tag">#TurnBasedStrategy</span>
+                        <span class="tag">#IndieGame</span>
+                        <span class="tag">#SelfRedemption</span>
+                    </div>
+                </div>
+                <div class="wishlist-note">
+                    <i class="far fa-heart"></i> Add to Wishlist · Join the Inner Fire
+                </div>
+            </div>
+        </div>
+
+        <!-- 下载链接区 -->
+   <div class="download-area">
+    <a href="downloads/game.rar" download class="download-btn">
+        <i class="fab fa-windows"></i> Download for Windows
+    </a>
+    <a href="downloads/game.rar" download class="download-btn">
+        <i class="fab fa-apple"></i> Download for macOS
+    </a>
+</div>
+
+        <!-- 评论区：EmberCouncil 论坛风格 -->
+        <div class="comments-section">
+            <div class="section-title">
+                <i class="fas fa-fire"></i> EmberCouncil · Community Forge
+            </div>
+            <div class="avg-score-box">
+                <div class="avg-star" id="avgStarDisplay">★★★★★</div>
+                <div class="rating-number" id="avgRatingValue">0.0</div>
+                <span style="font-size: 0.85rem;">/5.0 (Council rating)</span>
+            </div>
+
+            <div class="comment-form">
+                <div class="star-selector">
+                    <span>Your rating : </span>
+                    <div class="star-rating-input" id="starRatingInput">
+                        <i class="far fa-star" data-value="1"></i>
+                        <i class="far fa-star" data-value="2"></i>
+                        <i class="far fa-star" data-value="3"></i>
+                        <i class="far fa-star" data-value="4"></i>
+                        <i class="far fa-star" data-value="5"></i>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <input type="text" id="commentName" placeholder="Ember name / callsign" value="EmberSeeker">
+                    <textarea id="commentText" rows="2" placeholder="Share your path through the Heartfire Chessboard..."></textarea>
+                </div>
+                <div style="display: flex; justify-content: flex-end;">
+                    <button class="submit-comment" id="submitCommentBtn"><i class="fas fa-comment"></i> Kindle Comment</button>
+                </div>
+            </div>
+
+            <div class="comment-list" id="commentList"></div>
+        </div>
+        <footer>© 2025 Ember Studio · Game Start! — transform your flame into light. All rights reserved.</footer>
+    </div>
+</div>
+
+<!-- 缩放模态窗 -->
+<div id="imgModal" class="modal">
+    <span class="close-modal">&times;</span>
+    <img class="modal-content" id="modalImg">
+</div>
+
+<script>
+    // ---------- 媒体资源：图片与视频 ----------
+    // 【中文注释】下方媒体数组包含两个示例图片和一个示例预告视频，您可替换 src 链接为实际游戏截图/视频地址。
+    // 图片1: 战术棋盘战斗概念图 (可替换)
+    // 图片2: 内心世界记忆闪回概念图 (可替换)
+    // 视频: 游戏预告片或实机演示链接 (建议使用mp4格式)
+    const mediaItems = [
+    { type: "video", src: "assets/videos/trailer.mp4",  title: "Official Teaser Trailer" },
+  { type: "video", src: "assets/videos/ss.mp4",  title: "Official in-game Trailer" },
+   { type: "image", src: "assets/images/img1.jpg", title: "Heartfire Chessboard - Tactical View" },
+    { type: "image", src: "assets/images/img2.jpg", title: "Flame of Redemption - Inner Dialogue" },
+  { type: "image", src: "assets/images/img3.jpg", title: "Flame of Redemption - Inner Dialogue" }
+];
+
+    let currentMediaIndex = 0;
+    const mediaDisplay = document.getElementById("media-display");
+    const prevBtn = document.getElementById("prevMedia");
+    const nextBtn = document.getElementById("nextMedia");
+    const mediaCounterSpan = document.getElementById("mediaCounter");
+
+    function renderMedia(index) {
+        const item = mediaItems[index];
+        mediaDisplay.innerHTML = "";
+        if (item.type === "image") {
+            const img = document.createElement("img");
+            img.src = item.src;
+            img.alt = item.title;
+            img.className = "media-img";
+            img.addEventListener("click", () => openModal(img.src));
+            mediaDisplay.appendChild(img);
+        } else if (item.type === "video") {
+            const video = document.createElement("video");
+            video.src = item.src;
+            video.className = "media-video";
+            video.controls = true;
+            video.poster = item.poster || "";
+            mediaDisplay.appendChild(video);
+        }
+        mediaCounterSpan.innerText = `${index+1} / ${mediaItems.length}`;
+    }
+
+    // 模态框缩放功能
+    const modal = document.getElementById("imgModal");
+    const modalImg = document.getElementById("modalImg");
+    const closeModalSpan = document.querySelector(".close-modal");
+    function openModal(src) { modal.style.display = "flex"; modalImg.src = src; }
+    function closeModal() { modal.style.display = "none"; }
+    window.addEventListener("click", (e) => { if (e.target === modal) closeModal(); });
+    closeModalSpan.onclick = closeModal;
+
+    function nextMedia() { currentMediaIndex = (currentMediaIndex + 1) % mediaItems.length; renderMedia(currentMediaIndex); }
+    function prevMedia() { currentMediaIndex = (currentMediaIndex - 1 + mediaItems.length) % mediaItems.length; renderMedia(currentMediaIndex); }
+    prevBtn.addEventListener("click", prevMedia);
+    nextBtn.addEventListener("click", nextMedia);
+
+    // ---------- 评论区 & 评分系统 ----------
+    let commentsData = [
+        { id: 1, author: "ChessKnight", rating: 5, text: "Incredible fusion of chess mechanics and psychological depth. Every move feels like a conversation with my own shadows.", date: "2026-05-20" },
+        { id: 2, author: "FlameBearer", rating: 4, text: "The flame symbolism is powerful, and the tactical layer is solid. True ending left me in tears.", date: "2026-05-25" },
+        { id: 3, author: "EmberWarden", rating: 5, text: "Game Start! reinvents self-redemption in a chessboard. Highly recommend for fans of emotional RPGs.", date: "2026-05-27" }
+    ];
+
+    let currentSelectedRating = 0;
+    const starsInput = document.querySelectorAll("#starRatingInput i");
+    function updateStarSelection(rating) {
+        starsInput.forEach((star, idx) => {
+            const val = idx + 1;
+            if (val <= rating) {
+                star.classList.remove("far");
+                star.classList.add("fas", "selected-star");
+            } else {
+                star.classList.remove("fas", "selected-star");
+                star.classList.add("far");
+            }
+        });
+    }
+    starsInput.forEach(star => {
+        star.addEventListener("click", () => {
+            const ratingVal = parseInt(star.getAttribute("data-value"));
+            currentSelectedRating = ratingVal;
+            updateStarSelection(ratingVal);
+        });
+        star.addEventListener("mouseenter", () => {
+            const hoverVal = parseInt(star.getAttribute("data-value"));
+            starsInput.forEach((s, idx) => {
+                if (idx+1 <= hoverVal) {
+                    s.classList.remove("far");
+                    s.classList.add("fas", "hover-star");
+                } else {
+                    if(!s.classList.contains("selected-star")){
+                        s.classList.remove("fas", "hover-star");
+                        s.classList.add("far");
+                    }
+                }
+            });
+        });
+        star.addEventListener("mouseleave", () => {
+            starsInput.forEach(s => {
+                s.classList.remove("hover-star");
+                if (!s.classList.contains("selected-star")) {
+                    s.classList.add("far");
+                    s.classList.remove("fas");
+                } else {
+                    s.classList.add("fas");
+                }
+            });
+            if (currentSelectedRating > 0) updateStarSelection(currentSelectedRating);
+            else {
+                starsInput.forEach(s => {
+                    if(!s.classList.contains("selected-star")){
+                        s.classList.add("far");
+                        s.classList.remove("fas");
+                    }
+                });
+            }
+        });
+    });
+
+    function computeAverageAndRender() {
+        if (commentsData.length === 0) {
+            document.getElementById("avgRatingValue").innerText = "0.0";
+            document.getElementById("avgStarDisplay").innerHTML = "☆☆☆☆☆";
+            return;
+        }
+        let sum = commentsData.reduce((acc, c) => acc + c.rating, 0);
+        let avg = sum / commentsData.length;
+        document.getElementById("avgRatingValue").innerText = avg.toFixed(1);
+        let fullStars = Math.floor(avg);
+        let hasHalf = (avg - fullStars) >= 0.5;
+        let starHtml = "";
+        for(let i=1; i<=5; i++){
+            if(i <= fullStars) starHtml += '<i class="fas fa-star"></i>';
+            else if(i === fullStars+1 && hasHalf) starHtml += '<i class="fas fa-star-half-alt"></i>';
+            else starHtml += '<i class="far fa-star"></i>';
+        }
+        document.getElementById("avgStarDisplay").innerHTML = starHtml;
+    }
+
+    function escapeHtml(str) {
+        if(!str) return "";
+        return str.replace(/[&<>]/g, function(m) {
+            if(m === '&') return '&amp;';
+            if(m === '<') return '&lt;';
+            if(m === '>') return '&gt;';
+            return m;
+        });
+    }
+
+    function renderComments() {
+        const container = document.getElementById("commentList");
+        container.innerHTML = "";
+        [...commentsData].reverse().forEach(comment => {
+            const div = document.createElement("div");
+            div.className = "comment-item";
+            let starHtml = "";
+            for(let i=1; i<=5; i++) starHtml += (i <= comment.rating) ? '<i class="fas fa-star"></i>' : '<i class="far fa-star"></i>';
+            div.innerHTML = `
+                <div class="comment-header">
+                    <span class="comment-author"><i class="fas fa-crown"></i> ${escapeHtml(comment.author)}</span>
+                    <span class="comment-stars">${starHtml}</span>
+                </div>
+                <div class="comment-text">${escapeHtml(comment.text)}</div>
+                <div class="comment-date"><i class="far fa-calendar-alt"></i> ${comment.date}</div>
+            `;
+            container.appendChild(div);
+        });
+        computeAverageAndRender();
+    }
+
+    function addComment(author, rating, text) {
+        if (!author.trim()) author = "Anonymous Ember";
+        if (rating < 1 || rating > 5) rating = 3;
+        if (!text.trim()) text = "The flame guides me...";
+        const now = new Date();
+        const dateStr = `${now.getFullYear()}-${(now.getMonth()+1).toString().padStart(2,'0')}-${now.getDate().toString().padStart(2,'0')}`;
+        commentsData.push({ id: Date.now(), author: author.trim().substring(0,30), rating: rating, text: text.trim().substring(0,280), date: dateStr });
+        renderComments();
+    }
+
+    document.getElementById("submitCommentBtn").addEventListener("click", () => {
+        const nameInput = document.getElementById("commentName");
+        const textInput = document.getElementById("commentText");
+        if (currentSelectedRating === 0) {
+            alert("Please rate the game by clicking on stars (1-5) before kindling your comment.");
+            return;
+        }
+        addComment(nameInput.value, currentSelectedRating, textInput.value);
+        textInput.value = "";
+        currentSelectedRating = 0;
+        updateStarSelection(0);
+        starsInput.forEach(star => { star.classList.remove("selected-star", "fas"); star.classList.add("far"); });
+    });
+
+    // 下载模拟
+   // document.getElementById("downloadWin").addEventListener("click", () => alert("⚡ Windows demo build will begin soon. Full version coming 2025."));
+    //document.getElementById("downloadMac").addEventListener("click", () => alert("🍎 macOS build in final testing. Ignite your journey this year!"));
+
+    // ---------- 主题切换 (橙棕 <-> 红黑) ----------
+    const themeBtn = document.getElementById("themeSwitchBtn");
+    let isRedBlack = false;
+    themeBtn.addEventListener("click", () => {
+        document.body.classList.toggle("theme-redblack");
+        isRedBlack = document.body.classList.contains("theme-redblack");
+        themeBtn.innerHTML = isRedBlack ? '<i class="fas fa-sun"></i> Ember Glow' : '<i class="fas fa-skull"></i> Crimson Night';
+    });
+
+    // 初始化
+    renderMedia(0);
+    renderComments();
+    currentSelectedRating = 0;
+    updateStarSelection(0);
+</script>
+</body>
+</html>
